@@ -1,5 +1,5 @@
 # obs-youtube-updater
-Displays and updates in OBS the name and uploader of whatever YouTube video you're watching in Chrome. Recommended for people streaming with background musicwho want to credit the uploader!
+Displays and updates in OBS the name and uploader of whatever YouTube video you're watching in Chrome. Recommended for people streaming with background music who want to credit the uploader on their layout!
 
 # This is in alpha testing before I release it through Google! If you want to try it out and let me know if anything goes wrong, please follow the instructions below and open up an issue report if there are any bugs.
 
@@ -19,3 +19,5 @@ How to use:
 * In OBS Studio, under Sources, add a new Text source and check off "Read from file". Navigate to your downloads folder and select "current-youtube-output.txt"
 * Style and format it however you want, it's a text source. [Example](http://imgur.com/a/B2mKG)
 * It will automatically update whenever a new YouTube video starts in Chrome. Does not need to be the active tab.
+
+If you like this extension, please consider [donating to my PayPal](https://www.paypal.me/pidgezero), which is always appreciated but never necessary!
