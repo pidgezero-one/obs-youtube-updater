@@ -20,4 +20,4 @@ How to use:
 * Style and format it however you want, it's a text source. [Example](http://imgur.com/a/B2mKG)
 * It will automatically update whenever a new YouTube video starts in Chrome. Does not need to be the active tab.
 
-If you like this extension, please consider [donating to my PayPal](https://www.paypal.me/pidgezero), which is always appreciated but never necessary!
+If you like this extension, please consider [donating to my Twitch stream](https://twitch.streamlabs.com/pidgezero_one#/), which is always appreciated but never necessary!
