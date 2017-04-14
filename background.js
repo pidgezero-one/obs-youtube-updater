@@ -4,12 +4,6 @@
  * @param {function(string)} callback - called when the URL of the current tab
  *   is found.
  */
-function getTabs(callback) {
-  chrome.tabs.query({}, function(tabs) {
-    callback(tabs);
-  });
-}
-
 /**
  * @param {string} searchTerm - Search term for Google Image search.
  * @param {function(video)} callback - Called when an image has
@@ -18,13 +12,10 @@ function getTabs(callback) {
  *   The callback gets a string that describes the failure reason.
  */
 function getYoutubeVideo(id, callback, errorCallback) {
-  // Google image search - 100 searches per day.
-  // https://developers.google.com/image-search/
   var searchUrl = 'https://www.googleapis.com/youtube/v3/videos' +
     '?key=YOUR_API_KEY_HERE&id=' + encodeURIComponent(id) + "&part=snippet";
   var x = new XMLHttpRequest();
   x.open('GET', searchUrl);
-  // The Google image search API responds with JSON, so let Chrome parse it.
   x.responseType = 'json';
   x.onload = function() {
     callback(x.response.items);
@@ -54,10 +45,8 @@ function renderStatus(statusText) {
 }
 
 chrome.downloads.onDeterminingFilename.addListener(function(item, suggest) {
-	if (item.filename = "current-youtube-output.txt") {
-		console.log(true);
+	if (item.filename == "current-youtube-output.txt") {
 		chrome.storage.local.get(function(options) {
-			// retrieve preference from option page
 			var suggestion = {filename: item.filename};
 			suggestion["conflictAction"] = "overwrite";
 			suggest(suggestion);
@@ -70,44 +59,54 @@ var lastVideo = "";
 
 chrome.tabs.onUpdated.addListener( function (tabId, changeInfo, tab) {
 	if (changeInfo.status == 'complete') {
-		getTabs(function(tabs) {
-		  
-		  for (var i = 0; i < tabs.length; i++) {
-			var url = tabs[i].url;
-			if (url.match(/\byoutube.com\b/) && url != lastVideo) {
-				lastVideo = url;
-				var pars = getUrlVars(url);
-				
-				getYoutubeVideo(pars["v"], function(video) {
-					var output = video[0].snippet.channelTitle + " - " + video[0].snippet.title ;
+		chrome.storage.sync.get('youtubeObsEnable', function(val) {
+			if ((val.hasOwnProperty("youtubeObsEnable") && val["youtubeObsEnable"]) || !val.hasOwnProperty("youtubeObsEnable")) {
+				var url = tab.url;
+				if (url.match(/\byoutube.com\b/) && url != lastVideo) {
+					lastVideo = url;
+					var pars = getUrlVars(url);
 					
-					var textFile = null,
-					makeTextFile = function (text) {
-						var data = new Blob([text], {type: 'text/plain'});
+					getYoutubeVideo(pars["v"], function(video) {
+						//use an onchange event to save this to local storage?
+						chrome.storage.sync.get('youtubeObsFormat', function(val) {
+							if (val.hasOwnProperty("youtubeObsFormat") && val['youtubeObsFormat'] != "" && val['youtubeObsFormat'] != null) {
+								var output = val['youtubeObsFormat'].replace("%ARTIST%", video[0].snippet.channelTitle).replace("%TITLE%", video[0].snippet.title);
+								finishDownload(output);
+							}
+							else {
+								var output = video[0].snippet.channelTitle + " - " + video[0].snippet.title;
+								finishDownload(output)
+							}
+						});
+						
+						function finishDownload(str) {
+							
+							var textFile = null,
+							makeTextFile = function (text) {
+								var data = new Blob([text], {type: 'text/plain'});
 
-						// If we are replacing a previously generated file we need to
-						// manually revoke the object URL to avoid memory leaks.
-						if (textFile !== null) {
-						  window.URL.revokeObjectURL(textFile);
+								if (textFile !== null) {
+								  window.URL.revokeObjectURL(textFile);
+								}
+
+								textFile = window.URL.createObjectURL(data);
+
+								return textFile;
+							};
+
+							chrome.downloads.download({
+							  url: makeTextFile(str),
+							  filename: "current-youtube-output.txt",
+							  conflictAction: "overwrite"
+							});
 						}
-
-						textFile = window.URL.createObjectURL(data);
-
-						return textFile;
-					};
-
-					chrome.downloads.download({
-					  url: makeTextFile(output),
-					  filename: "current-youtube-output.txt", // Optional
-					  conflictAction: "overwrite"
+						
+						
+					}, function(errorMessage) {
+						console.log(errorMessage);
 					});
-					
-				}, function(errorMessage) {
-					console.log(errorMessage);
-				});
+				}
 			}
-		  }
-		
 		});
 	}
 });
