@@ -1,0 +1,70 @@
+<!doctype html>
+<!--
+ This page is shown when the extension button is clicked, because the
+ "browser_action" field in manifest.json contains the "default_popup" key with
+ value "popup.html".
+ -->
+<html>
+  <head>
+    <title>Getting Started Extension's Popup</title>
+    <style>
+      body {
+        font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
+		width: 400px;
+      }
+	  .display-table {
+		display: table;
+		width: 100%;
+	  }
+	  .display-row {
+		display: table-row;
+	  }
+	  .display-cell {
+		display: table-cell;
+		padding-bottom: 10px;
+		vertical-align: middle;
+	  }
+	  .display-cell input[type="text"] {
+		width: 100%;
+	  }
+	  .display-cell input[type="checkbox"] {
+		margin-left: 0;
+	  }
+	  .display-cell:first-child {
+		width: 15%;
+	  }
+    </style>
+
+  </head>
+  <body>
+  <div class="display-table">
+	<div class="display-row">
+		<div class="display-cell">
+			<label for="enableExtension">Enabled:</label>
+		</div>
+		<div class="display-cell">
+			<input type="checkbox" id="enableExtension"/>
+		</div>
+	</div>
+	<div class="display-row">
+		<div class="display-cell">
+			<label>Format:</label>
+		</div>
+		<div class="display-cell">
+			<input type="text" id="youtube-obs-name-format"/>
+		</div>
+	</div>
+	<div class="display-row">
+		<div class="display-cell">
+		</div>
+		<div class="display-cell">
+			(Write <b>%TITLE%</b> and <b>%ARTIST%</b> where you would like the video's title and artist/uploader name to appear.)
+		</div>
+	</div>
+  </div>
+    
+  
+  <script src="popup.js"></script>
+  </body>
+</html>
+
